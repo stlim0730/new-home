@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PROJECT_NAME=new-home
 ENV PROJECT_ROOT=/opt/${PROJECT_NAME}
+ENV ASTRO_ROOT=${PROJECT_ROOT}/astro
 ENV PORT=8000
 
 # Networks
@@ -16,7 +17,7 @@ RUN apt install -y sudo zsh vim curl python3-venv
 
 # Path
 RUN mkdir -p ${PROJECT_ROOT}
-# ADD . ${PROJECT_ROOT}
+ADD . ${PROJECT_ROOT}
 WORKDIR ${PROJECT_ROOT}
 
 # Python (3.12.3)
@@ -28,8 +29,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN sudo -E bash nodesource_setup.sh
 RUN sudo apt install -y nodejs
 RUN rm nodesource_setup.sh
-# RUN npm i
+RUN npm i --prefix ${ASTRO_ROOT}
 
 # Shell
 SHELL ["/bin/zsh", "-c"]
+ENV PROMPT="[%n@ %m %#] "
 ENTRYPOINT ["/bin/zsh"]
