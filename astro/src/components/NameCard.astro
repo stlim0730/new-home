@@ -1,0 +1,57 @@
+---
+import * as leadTextSrc from "../content/lead/lead.md";
+
+const { name, src } = Astro.props;
+
+const leadTexts = leadTextSrc.rawContent().trim().split("\n");
+
+const getRandomLeadText = () => {
+    const index = Math.floor(Math.random() * leadTexts.length);
+    return leadTexts[index];
+};
+---
+
+<div class="name-card flex-row-container">
+    <div class="name-card-text-set">
+        <h1 class="text-gradient">{ name }</h1>
+        <div class="lead-text">
+            { getRandomLeadText() }
+        </div>
+    </div>
+    <div class="flex-item">
+        <img class="profile-photo" src={src} />
+    </div>
+</div>
+
+<style>
+    h1 {
+        font-size: 2rem;
+    }
+    .text-gradient {
+        background-image: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 300%;
+        background-position: 0%;
+    }
+    .name-card {
+        width: 700px;
+        justify-content: space-between;
+    }
+    .name-card-text-set {
+        width: 400px;
+    }
+    .lead-text {
+        line-height: 2em;
+    }
+    .profile-photo {
+        border-radius: 50%;
+        height: 10rem;
+        padding: 1px;
+        background-image: linear-gradient(
+            340deg,
+            rgb(var(--accent)),
+            rgb(var(--accent-light))
+        );
+    }
+</style>

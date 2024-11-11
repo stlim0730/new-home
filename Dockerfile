@@ -33,5 +33,5 @@ RUN npm i --prefix ${ASTRO_ROOT}
 
 # Shell
 SHELL ["/bin/zsh", "-c"]
-ENV PROMPT="[%n@ %m %#] "
+ENV PROMPT="[%n@%m:%~ %#] "
 ENTRYPOINT ["/bin/zsh"]
