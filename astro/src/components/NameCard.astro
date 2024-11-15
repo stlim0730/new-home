@@ -53,17 +53,9 @@ const getRandomLeadText = () => {
         object-fit: cover;
     }
 
-    @media (max-width: 1080px) {
-        h1,
-        h2,
-        h3,
-        h4,
-        h5 {
-            font-size: 1.3rem;
-        }
-
+    @media (max-width: 1024px) {
         p {
-            font-size: 1rem;
+            font-size: 1.3rem;
         }
 
         .name-card {
@@ -79,14 +71,32 @@ const getRandomLeadText = () => {
         }
 
         .profile-photo {
-            width: 6rem;
-            height: 6rem;
-            /* margin-top: 1rem; */
+            width: 8rem;
+            height: 8rem;
         }
 
         .lead-text {
             font-size: 0.9rem;
             line-height: 1.6em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-size: 1.3rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+
+        .profile-photo {
+            width: 6rem;
+            height: 6rem;
         }
     }
 </style>

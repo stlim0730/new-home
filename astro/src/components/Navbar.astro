@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-icon/components'
+import { Icon } from "astro-icon/components";
 const { name, src } = Astro.props;
 ---
 
@@ -37,7 +37,7 @@ const { name, src } = Astro.props;
         letter-spacing: 0.1em;
         font-weight: 200;
     }
-    
+
     .navbar-links {
         justify-content: space-between;
     }
@@ -66,7 +66,7 @@ const { name, src } = Astro.props;
         padding: 0.4rem 1.5rem;
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 1024px) {
         .navbar {
             padding-left: 1rem;
             padding-right: 1rem;
@@ -74,7 +74,7 @@ const { name, src } = Astro.props;
             flex-direction: column;
             justify-content: initial;
         }
-        
+
         .navbar-toggle {
             display: block;
         }
@@ -86,13 +86,20 @@ const { name, src } = Astro.props;
             align-items: center;
             background-color: #111104;
         }
-        
+
+        .navbar-links a {
+            font-size:1.3rem;
+            padding: 1rem;
+        }
+
         .menu-toggle-checkbox:checked + .navbar-toggle + .navbar-links {
             display: flex;
         }
+    }
 
+    @media (max-width: 480px) {
         .navbar-links a {
-            padding: 1rem;
+            font-size: 0.9rem;
         }
     }
 </style>
