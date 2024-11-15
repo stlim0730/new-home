@@ -1,4 +1,6 @@
 ---
+import Layout from "../layouts/Layout.astro";
+
 // import CareerCard from "@component/CareerCard.astro";
 // import type { CollectionEntry } from "astro:content";
 
@@ -6,23 +8,27 @@
 //   experiences: CollectionEntry<"experience">[];
 // }
 
-const { experiences } = Astro.props;
+// const { experiences } = Astro.props;
 ---
 
-<ol class="career-track">
+<Layout>
+    Career
+</Layout>
+
+<!-- <ol class="career-track">
   {
-    // experiences.map((experience) => (
-    //   <li
-    //     class="career-track__item"
-    //     class:list={{
-    //       "career-track__item--active": !experience.data.titles.at(0).endDate,
-    //     }}
-    //   >
-    //     <CareerCard experience={experience} />
-    //   </li>
-    // ))
+    experiences.map((experience) => (
+      <li
+        class="career-track__item"
+        class:list={{
+          "career-track__item--active": !experience.data.titles.at(0).endDate,
+        }}
+      >
+        <CareerCard experience={experience} />
+      </li>
+    ))
   }
-</ol>
+</ol> -->
 
 <style>
   .career-track {
