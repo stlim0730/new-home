@@ -12,7 +12,6 @@ import NameCard from "../components/NameCard.astro";
 
 <style>
     main {
-        /* padding: 2rem; */
 		width: auto;
     }
     .instructions {
@@ -41,5 +40,11 @@ import NameCard from "../components/NameCard.astro";
         grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
         gap: 2rem;
         padding: 0;
+    }
+
+    @media (max-width: 1080px) {
+        main {
+            width: 100%;
+        }
     }
 </style>

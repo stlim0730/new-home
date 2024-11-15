@@ -1,0 +1,98 @@
+---
+import { Icon } from 'astro-icon/components'
+const { name, src } = Astro.props;
+---
+
+<div class="navbar">
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox" />
+    <label for="menu-toggle" class="navbar-toggle">
+        <Icon name="quill--hamburger" />
+    </label>
+
+    <div class="navbar-links">
+        <a href="#">Home</a>
+        <a href="#">News</a>
+        <a href="#">Career</a>
+        <a href="#">Publications + Projects</a>
+        <a href="#">Photography</a>
+        <a href="#">About</a>
+        <a href="#">CV</a>
+    </div>
+</div>
+
+<style>
+    .navbar {
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #111104;
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+        padding-left: 6rem;
+        padding-right: 6rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        letter-spacing: 0.1em;
+        font-weight: 200;
+    }
+    
+    .navbar-links {
+        justify-content: space-between;
+    }
+
+    .navbar-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem 1.5rem;
+    }
+
+    .navbar-links a:hover {
+        background-color: var(--background--dark);
+        border-radius: 4px;
+        font-weight: normal;
+    }
+
+    .menu-toggle-checkbox {
+        display: none;
+    }
+
+    .navbar-toggle {
+        display: none;
+        font-size: 1.5rem;
+        color: white;
+        cursor: pointer;
+        padding: 0.4rem 1.5rem;
+    }
+
+    @media (max-width: 1080px) {
+        .navbar {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            font-size: 0.8rem;
+            flex-direction: column;
+            justify-content: initial;
+        }
+        
+        .navbar-toggle {
+            display: block;
+        }
+
+        .navbar-links {
+            display: none;
+            width: 100vw;
+            flex-direction: column;
+            align-items: center;
+            background-color: #111104;
+        }
+        
+        .menu-toggle-checkbox:checked + .navbar-toggle + .navbar-links {
+            display: flex;
+        }
+
+        .navbar-links a {
+            padding: 1rem;
+        }
+    }
+</style>
