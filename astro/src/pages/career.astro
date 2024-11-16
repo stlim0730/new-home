@@ -67,7 +67,7 @@ console.log(career);
 </Layout>
 
 <style>
-    career {
+    .timeline {
         position: relative;
         padding-left: 4px;
         border-left: 2px solid rgb(var(--accent));
@@ -133,6 +133,42 @@ console.log(career);
     }
 
     @media (max-width: 480px) {
-        
+        body {
+            overflow-y: auto;
+        }
+        career {
+            padding-top: 90rem;
+            padding-bottom: 20rem;
+        }
+        .career-card {
+            width: 100%; /* Use full width */
+            margin-left: 0; /* Remove left margin */
+            padding: 8px; /* Adjust padding for smaller screens */
+        }
+
+        .career-card-row.upper {
+            flex-direction: column; /* Stack the content vertically */
+            align-items: flex-start;
+        }
+
+        .career-card-row.lower {
+            flex-direction: column; /* Stack content vertically */
+            align-items: flex-start;
+            margin-top: 8px;
+        }
+
+        .career-card .logo svg {
+            width: 1.5rem; /* Scale down the logo size */
+            height: 1.5rem;
+            margin-right: 0; /* Remove right margin */
+            margin-bottom: 4px; /* Add spacing below the logo */
+        }
+
+        .career-card .role,
+        .career-card .location,
+        .career-card .dates {
+            flex: none; /* Remove flex behavior */
+            margin-bottom: 4px; /* Add spacing between lines */
+        }
     }
 </style>
