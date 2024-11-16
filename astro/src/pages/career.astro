@@ -1,76 +1,102 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import * as careerContent from "../content/career/career.md";
 
-// import CareerCard from "@component/CareerCard.astro";
-// import type { CollectionEntry } from "astro:content";
-
-// interface Props {
-//   experiences: CollectionEntry<"experience">[];
-// }
-
-// const { experiences } = Astro.props;
+const career = careerContent.frontmatter;
+console.log(career);
 ---
 
 <Layout>
-    Career
+    <career>
+        {
+            career.map((item: any) => {
+                return (
+                    <div
+                        class={
+                            item.isProfessional
+                                ? "career-item professional"
+                                : "career-item academic"
+                        }
+                    >
+                        <div
+                            class={
+                                item.isPresent
+                                    ? "career-card present"
+                                    : "career-card"
+                            }
+                        >
+                            <div class="role">{item.role}</div>
+                            <div class="institution">
+                                {item.institution} &#8729; {item.location}
+                            </div>
+                            <div class="dates">
+                                {item.startMonth} {item.startYear} —{" "}
+                                {item.isPresent ? (
+                                    <span class="present">Present</span>
+                                ) : (
+                                    `${item.endMonth} ${item.endYear}`
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            })
+        }
+    </career>
 </Layout>
 
-<!-- <ol class="career-track">
-  {
-    experiences.map((experience) => (
-      <li
-        class="career-track__item"
-        class:list={{
-          "career-track__item--active": !experience.data.titles.at(0).endDate,
-        }}
-      >
-        <CareerCard experience={experience} />
-      </li>
-    ))
-  }
-</ol> -->
-
 <style>
-  .career-track {
-    margin-top: var(--space-m);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-    margin-left: var(--space-l);
-    &__item {
-      position: relative;
-      --dot-radius: 10px;
-      &:last-child {
-        margin-bottom: calc(-1 * var(--space-s));
-      }
-      &:not(:last-child)::before {
-        content: "";
-        position: absolute;
-        left: calc(-1 * var(--space-m));
-        height: 100%;
-        border-left: var(--border-md) solid var(--grey-600);
-        margin-top: calc(0.5 * var(--fs-base));
-      }
-      &::after {
-        position: absolute;
-        left: calc(
-          calc(-1 * var(--space-m)) +
-            calc(calc(-0.5 * var(--dot-radius)) + calc(0.5 * var(--border-md)))
-        );
-        content: "";
-        top: calc(-0.5 * var(--dot-radius));
-        background-color: var(--grey-600);
-        border-radius: var(--radius-full);
-        margin-top: calc(0.5 * var(--fs-base));
-        height: var(--dot-radius);
-        width: var(--dot-radius);
-      }
-      &--active {
-        &::after {
-          background-color: var(--grey-300);
-        }
-      }
+    career {
+        position: relative;
+        padding-left: 4px;
+        border-left: 2px solid rgb(var(--accent));
     }
-  }
+
+    .career-item {
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .career-item::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .career-item.professional::before {
+        background-color: rgb(var(--accent-light));
+    }
+
+    .career-item.academic::before {
+        background-color: rgb(var(--accent-dark));
+    }
+
+    .career-card {
+        margin-left: 20px;
+        padding: 10px;
+    }
+
+    .role {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .institution {
+        font-style: italic;
+        margin-bottom: 5px;
+    }
+
+    .career-card.present {
+        background-color: red;
+    }
+
+    .career-card .dates {
+        color: rgb(var(--accent));
+        font-size: 14px;
+    }
 </style>

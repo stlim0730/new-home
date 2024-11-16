@@ -29,7 +29,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN sudo -E bash nodesource_setup.sh
 RUN sudo apt install -y nodejs
 RUN rm nodesource_setup.sh
-RUN npm i --prefix ${ASTRO_ROOT}
+RUN npm --prefix ${ASTRO_ROOT} install
 
 # Shell
 SHELL ["/bin/zsh", "-c"]
