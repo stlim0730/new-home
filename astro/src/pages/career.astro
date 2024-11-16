@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
 import * as careerContent from "../content/career/career.md";
 
 const career = careerContent.frontmatter;
@@ -8,40 +9,60 @@ console.log(career);
 
 <Layout>
     <career>
-        {
-            career.map((item: any) => {
-                return (
-                    <div
-                        class={
-                            item.isProfessional
-                                ? "career-item professional"
-                                : "career-item academic"
-                        }
-                    >
+        <div class="timeline">
+            {
+                career.map((item: any) => {
+                    return (
                         <div
                             class={
-                                item.isPresent
-                                    ? "career-card present"
-                                    : "career-card"
+                                item.present
+                                    ? "career-item present"
+                                    : "career-item"
                             }
                         >
-                            <div class="role">{item.role}</div>
-                            <div class="institution">
-                                {item.institution} &#8729; {item.location}
-                            </div>
-                            <div class="dates">
-                                {item.startMonth} {item.startYear} —{" "}
-                                {item.isPresent ? (
-                                    <span class="present">Present</span>
-                                ) : (
-                                    `${item.endMonth} ${item.endYear}`
-                                )}
+                            <div
+                                class={
+                                    item.isPresent
+                                        ? "career-card present"
+                                        : "career-card"
+                                }
+                            >
+                                <div class="career-card-row upper">
+                                    <div class="logo">
+                                        {item.logo ? (
+                                            <Icon name={item.logo} />
+                                        ) : null}
+                                    </div>
+                                    <div class="institution">
+                                        {item.institution
+                                            ? item.institution
+                                            : null}
+                                    </div>
+                                    &emsp;
+                                    <Icon name="quill--chevron-right" />
+                                    &emsp;
+                                    <div class="department">
+                                        {item.department}
+                                    </div>
+                                </div>
+                                <div class="career-card-row lower">
+                                    <div class="role">{item.role}</div>
+                                    <div class="location">{item.location}</div>
+                                    <div class="dates">
+                                        {item.startMonth} {item.startYear} —
+                                        {item.isPresent ? (
+                                            <span class="present">Present</span>
+                                        ) : (
+                                            `${item.endMonth} ${item.endYear}`
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                );
-            })
-        }
+                    );
+                })
+            }
+        </div>
     </career>
 </Layout>
 
@@ -50,13 +71,13 @@ console.log(career);
         position: relative;
         padding-left: 4px;
         border-left: 2px solid rgb(var(--accent));
+        font-weight: 200;
     }
-
     .career-item {
-        margin-bottom: 30px;
+        margin-top: 5px;
+        margin-bottom: 5px;
         position: relative;
     }
-
     .career-item::before {
         content: "";
         position: absolute;
@@ -65,38 +86,53 @@ console.log(career);
         width: 10px;
         height: 10px;
         border-radius: 50%;
+        background-color: rgb(var(--accent));
     }
-
-    .career-item.professional::before {
-        background-color: rgb(var(--accent-light));
+    .career-item.present::before {
+        background-color: rgb(var(--accent-light)) !important;
     }
-
-    .career-item.academic::before {
-        background-color: rgb(var(--accent-dark));
-    }
-
     .career-card {
+        width: 34rem;
         margin-left: 20px;
         padding: 10px;
+        line-height: 1.3rem;
+        display: flex;
+        flex-direction: column;
     }
-
-    .role {
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 5px;
+    .career-card-row {
+        display: flex;
+        align-items: center;
+        margin-top: 2px;
+        margin-bottom: 2px;
     }
-
-    .institution {
-        font-style: italic;
-        margin-bottom: 5px;
-    }
-
     .career-card.present {
-        background-color: red;
+        border-radius: 4px;
+        border: 2px solid rgb(var(--accent-dark));
     }
-
+    .career-card .location {
+        color: rgb(var(--accent));
+    }
     .career-card .dates {
         color: rgb(var(--accent));
-        font-size: 14px;
+    }
+    .career-card .role {
+        font-weight: initial;
+    }
+    .career-card .role,
+    .career-card .location,
+    .career-card .dates {
+        flex: 1;
+    }
+    .career-card .logo svg {
+        width: 2rem;
+        height: 2rem;
+        margin-right: 1rem;
+    }
+    span.present {
+        color: rgb(var(--accent-light));
+    }
+
+    @media (max-width: 480px) {
+        
     }
 </style>

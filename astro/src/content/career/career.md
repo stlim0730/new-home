@@ -1,6 +1,7 @@
 ---
 -
     institution: Adobe
+    logo: adobe-logo
     department: FireFly Client
     role: Software Engineer
     location: San Jose, CA
@@ -10,6 +11,7 @@
     isPresent: true
 -
     institution: Adobe
+    logo: adobe-logo
     department: FireFly Data Platform
     role: Software Engineer
     location: San Jose, CA
@@ -21,6 +23,7 @@
     isPresent: false
 -
     institution: Adobe
+    logo: adobe-logo
     department: EPG
     role: Software Engineer
     location: San Jose, CA
@@ -32,6 +35,7 @@
     isPresent: false
 -
     institution: Cornell University
+    logo: cornell-logo
     department: Information Science
     role: PhD Student
     location: New York, NY
