@@ -47,8 +47,9 @@
     isPresent: false
 -
     institution: UC Berkeley
+    logo: berkeley-logo
     department: School of Information
-    role: PhD Student
+    role: PhD Student (transferred out)
     location: Berkeley, CA
     isProfessional: false
     startYear: 2012
@@ -58,6 +59,7 @@
     isPresent: false
 -
     institution: KAIST Institute
+    logo: kaist-logo
     department: Entertainment Technology
     role: Research Scientist
     location: Daejeon, South Korea
@@ -69,6 +71,7 @@
     isPresent: false
 -
     institution: Yonsei University
+    logo: yonsei-logo
     department: Cognitive Science
     role: MS Student
     location: Seoul, South Korea
@@ -80,6 +83,7 @@
     isPresent: false
 -
     institution: Yonsei University
+    logo: yonsei-logo
     department: Computer Science
     role: Undergrad Student
     location: Seoul, South Korea

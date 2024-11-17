@@ -8,7 +8,8 @@ console.log(career);
 ---
 
 <Layout>
-    <career>
+    <div class="flex-col-center career-page">
+        <h2>Career</h2>
         <div class="timeline">
             {
                 career.map((item: any) => {
@@ -63,15 +64,19 @@ console.log(career);
                 })
             }
         </div>
-    </career>
+    </div>
 </Layout>
 
 <style>
+    .career-page {
+        margin-top: 2rem;
+        /* margin-bottom: 2rem; */
+    }
     .timeline {
-        position: relative;
         padding-left: 4px;
         border-left: 2px solid rgb(var(--accent));
         font-weight: 200;
+        margin-bottom: 6rem;
     }
     .career-item {
         margin-top: 5px;
@@ -133,42 +138,31 @@ console.log(career);
     }
 
     @media (max-width: 480px) {
-        body {
-            overflow-y: auto;
-        }
-        career {
-            padding-top: 90rem;
-            padding-bottom: 20rem;
-        }
         .career-card {
-            width: 100%; /* Use full width */
-            margin-left: 0; /* Remove left margin */
-            padding: 8px; /* Adjust padding for smaller screens */
+            width: calc(100vw - 5rem);
+            margin-left: 10px;
+            margin-top: 6px;
+            margin-bottom: 6px;
         }
-
         .career-card-row.upper {
-            flex-direction: column; /* Stack the content vertically */
-            align-items: flex-start;
+            font-size: 0.8rem;
         }
-
         .career-card-row.lower {
-            flex-direction: column; /* Stack content vertically */
-            align-items: flex-start;
-            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
         }
-
         .career-card .logo svg {
-            width: 1.5rem; /* Scale down the logo size */
-            height: 1.5rem;
-            margin-right: 0; /* Remove right margin */
-            margin-bottom: 4px; /* Add spacing below the logo */
         }
-
         .career-card .role,
         .career-card .location,
         .career-card .dates {
-            flex: none; /* Remove flex behavior */
-            margin-bottom: 4px; /* Add spacing between lines */
+        }
+        .career-card .role {
+            flex: 1 1 100%;
+        }
+        .career-card .location,
+        .career-card .dates {
+            flex: 1 1 calc(50% - 4px); /* Share the next row equally */
         }
     }
 </style>

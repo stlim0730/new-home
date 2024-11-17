@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar.astro";
 
 // const { title } = Astro.props;
 ---
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -20,7 +21,7 @@ import Navbar from "../components/Navbar.astro";
     </head>
     <body>
         <Navbar />
-        <div class="content flex-col-container">
+        <div class="container">
             <slot />
         </div>
     </body>
@@ -84,34 +85,38 @@ import Navbar from "../components/Navbar.astro";
         margin: 0;
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
-    }
-    .content {
-        margin: 0;
-        width: 100%;
-        height: calc(100vh - 6rem);
-        justify-content: center;
     }
     h1,
     h2,
     h3,
     h4,
     h5 {
-        font-family: "Merliha", Garamond, Georgia, serif;
+        font-weight: 200;
         letter-spacing: 0.2em;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
     }
     p {
         font-weight: 200;
         letter-spacing: 0.1em;
     }
-    .flex-col-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .container {
+        width: 100%;
+        height: calc(100vh - 6rem);
     }
-    .flex-row-container {
+    .full-height {
+        height: 100%;
+    }
+    .flex-col-center {
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column; /* Arrange items in a column */
+        align-items: center; /* Center items horizontally */
+        justify-content: center; /* Center items vertically */
+    }
+    .flex-row-center {
+        display: flex;
+        flex-direction: row; /* Arrange items in a row */
+        align-items: center; /* Center items vertically */
+        justify-content: center; /* Center items horizontally */
     }
 </style>
