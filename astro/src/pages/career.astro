@@ -36,16 +36,22 @@ console.log(career);
                                             ) : null}
                                         </div>
                                         <div class="institution">
-                                            {item.institution
-                                                ? item.institution
-                                                : null}
+                                            { item.institution }
                                         </div>
-                                        &emsp;
-                                        <Icon name="quill--chevron-right" />
-                                        &emsp;
-                                        <div class="department">
-                                            {item.department}
-                                        </div>
+                                        {
+                                            item.department ?
+                                            (
+                                                <>
+                                                &emsp;
+                                                <Icon name="quill--chevron-right" />
+                                                &emsp;
+                                                <div class="department">
+                                                    { item.department }
+                                                </div>
+                                                </>
+                                            ) :
+                                            null
+                                        }
                                     </div>
                                     <div class="career-card-row lower">
                                         <div class="role">{item.role}</div>

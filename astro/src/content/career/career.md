@@ -46,6 +46,17 @@
     endMonth: Jul
     isPresent: false
 -
+    institution: FX Pal
+    logo: fxpal-logo
+    role: Intern Researcher
+    location: Palo Alto, CA
+    isProfessional: true
+    startYear: 2014
+    startMonth: May
+    endYear: 2014
+    endMonth: Aug
+    isPresent: false
+-
     institution: UC Berkeley
     logo: berkeley-logo
     department: School of Information
