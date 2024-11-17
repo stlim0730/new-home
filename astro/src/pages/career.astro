@@ -1,76 +1,201 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import * as careerContent from "../content/career/career.md";
 
-// import CareerCard from "@component/CareerCard.astro";
-// import type { CollectionEntry } from "astro:content";
-
-// interface Props {
-//   experiences: CollectionEntry<"experience">[];
-// }
-
-// const { experiences } = Astro.props;
+const career = careerContent.frontmatter;
+console.log(career);
 ---
 
 <Layout>
-    Career
+    <div class="flex-col-center career-page">
+        <h2>Career</h2>
+        <div class="flex-col-center career-page-content">
+            <div class="timeline">
+                {
+                    career.map((item: any) => {
+                        return (
+                            <div
+                                class={
+                                    item.present
+                                        ? "career-item present"
+                                        : "career-item"
+                                }
+                            >
+                                <div
+                                    class={
+                                        item.isPresent
+                                            ? "career-card present"
+                                            : "career-card"
+                                    }
+                                >
+                                    <div class="career-card-row upper">
+                                        <div class="logo">
+                                            {item.logo ? (
+                                                <Icon name={item.logo} />
+                                            ) : null}
+                                        </div>
+                                        <div class="institution">
+                                            { item.institution }
+                                        </div>
+                                        {
+                                            item.department ?
+                                            (
+                                                <>
+                                                &emsp;
+                                                <Icon name="quill--chevron-right" />
+                                                &emsp;
+                                                <div class="department">
+                                                    { item.department }
+                                                </div>
+                                                </>
+                                            ) :
+                                            null
+                                        }
+                                    </div>
+                                    <div class="career-card-row lower">
+                                        <div class="role">{item.role}</div>
+                                        <div class="location">
+                                            {item.location}
+                                        </div>
+                                        <div class="dates">
+                                            {item.startMonth} {item.startYear} —
+                                            {item.isPresent ? (
+                                                <span class="present">
+                                                    Present
+                                                </span>
+                                            ) : (
+                                                `${item.endMonth} ${item.endYear}`
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                }
+            </div>
+            <div class="career-highlights">Career Highlights</div>
+        </div>
+    </div>
 </Layout>
 
-<!-- <ol class="career-track">
-  {
-    experiences.map((experience) => (
-      <li
-        class="career-track__item"
-        class:list={{
-          "career-track__item--active": !experience.data.titles.at(0).endDate,
-        }}
-      >
-        <CareerCard experience={experience} />
-      </li>
-    ))
-  }
-</ol> -->
-
 <style>
-  .career-track {
-    margin-top: var(--space-m);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-    margin-left: var(--space-l);
-    &__item {
-      position: relative;
-      --dot-radius: 10px;
-      &:last-child {
-        margin-bottom: calc(-1 * var(--space-s));
-      }
-      &:not(:last-child)::before {
-        content: "";
-        position: absolute;
-        left: calc(-1 * var(--space-m));
-        height: 100%;
-        border-left: var(--border-md) solid var(--grey-600);
-        margin-top: calc(0.5 * var(--fs-base));
-      }
-      &::after {
-        position: absolute;
-        left: calc(
-          calc(-1 * var(--space-m)) +
-            calc(calc(-0.5 * var(--dot-radius)) + calc(0.5 * var(--border-md)))
-        );
-        content: "";
-        top: calc(-0.5 * var(--dot-radius));
-        background-color: var(--grey-600);
-        border-radius: var(--radius-full);
-        margin-top: calc(0.5 * var(--fs-base));
-        height: var(--dot-radius);
-        width: var(--dot-radius);
-      }
-      &--active {
-        &::after {
-          background-color: var(--grey-300);
-        }
-      }
+    .career-page {
+        margin-top: 2rem;
+        /* margin-bottom: 2rem; */
     }
-  }
+    .career-page-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex: 1;
+    }
+    .timeline {
+        border-left: 2px solid rgb(var(--accent));
+        font-weight: 200;
+        margin-bottom: 6rem;
+        padding-left: 4px;
+        padding-right: 2rem;
+    }
+    .career-highlights {
+        padding-left: 2rem;
+    }
+    .career-item {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    .career-item::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: rgb(var(--accent));
+    }
+    .career-item.present::before {
+        background-color: rgb(var(--accent-light)) !important;
+    }
+    .career-card {
+        width: 34rem;
+        margin-left: 20px;
+        padding: 10px;
+        line-height: 1.3rem;
+        display: flex;
+        flex-direction: column;
+    }
+    .career-card-row {
+        display: flex;
+        align-items: center;
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+    .career-card.present {
+        border-radius: 4px;
+        border: 2px solid rgb(var(--accent-dark));
+    }
+    .career-card .location {
+        color: rgb(var(--accent));
+    }
+    .career-card .dates {
+        color: rgb(var(--accent));
+    }
+    .career-card .role {
+        font-weight: initial;
+    }
+    .career-card .role,
+    .career-card .location,
+    .career-card .dates {
+        flex: 1;
+    }
+    .career-card .logo svg {
+        width: 2rem;
+        height: 2rem;
+        margin-right: 1rem;
+    }
+    span.present {
+        color: rgb(var(--accent-light));
+    }
+
+    @media (max-width: 480px) {
+        .career-page-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+        .timeline {
+            /* padding-left: 4px; */
+            padding-right: initial;
+        }
+        .career-card {
+            width: calc(100vw - 5rem);
+            margin-left: 10px;
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+        .career-card-row.upper {
+            font-size: 0.8rem;
+        }
+        .career-card-row.lower {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .career-card .logo svg {
+        }
+        .career-card .role,
+        .career-card .location,
+        .career-card .dates {
+        }
+        .career-card .role {
+            flex: 1 1 100%;
+        }
+        .career-card .location,
+        .career-card .dates {
+            flex: 1 1 calc(50% - 4px); /* Share the next row equally */
+        }
+    }
 </style>
