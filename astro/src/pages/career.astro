@@ -10,59 +10,66 @@ console.log(career);
 <Layout>
     <div class="flex-col-center career-page">
         <h2>Career</h2>
-        <div class="timeline">
-            {
-                career.map((item: any) => {
-                    return (
-                        <div
-                            class={
-                                item.present
-                                    ? "career-item present"
-                                    : "career-item"
-                            }
-                        >
+        <div class="flex-col-center career-page-content">
+            <div class="timeline">
+                {
+                    career.map((item: any) => {
+                        return (
                             <div
                                 class={
-                                    item.isPresent
-                                        ? "career-card present"
-                                        : "career-card"
+                                    item.present
+                                        ? "career-item present"
+                                        : "career-item"
                                 }
                             >
-                                <div class="career-card-row upper">
-                                    <div class="logo">
-                                        {item.logo ? (
-                                            <Icon name={item.logo} />
-                                        ) : null}
+                                <div
+                                    class={
+                                        item.isPresent
+                                            ? "career-card present"
+                                            : "career-card"
+                                    }
+                                >
+                                    <div class="career-card-row upper">
+                                        <div class="logo">
+                                            {item.logo ? (
+                                                <Icon name={item.logo} />
+                                            ) : null}
+                                        </div>
+                                        <div class="institution">
+                                            {item.institution
+                                                ? item.institution
+                                                : null}
+                                        </div>
+                                        &emsp;
+                                        <Icon name="quill--chevron-right" />
+                                        &emsp;
+                                        <div class="department">
+                                            {item.department}
+                                        </div>
                                     </div>
-                                    <div class="institution">
-                                        {item.institution
-                                            ? item.institution
-                                            : null}
-                                    </div>
-                                    &emsp;
-                                    <Icon name="quill--chevron-right" />
-                                    &emsp;
-                                    <div class="department">
-                                        {item.department}
-                                    </div>
-                                </div>
-                                <div class="career-card-row lower">
-                                    <div class="role">{item.role}</div>
-                                    <div class="location">{item.location}</div>
-                                    <div class="dates">
-                                        {item.startMonth} {item.startYear} —
-                                        {item.isPresent ? (
-                                            <span class="present">Present</span>
-                                        ) : (
-                                            `${item.endMonth} ${item.endYear}`
-                                        )}
+                                    <div class="career-card-row lower">
+                                        <div class="role">{item.role}</div>
+                                        <div class="location">
+                                            {item.location}
+                                        </div>
+                                        <div class="dates">
+                                            {item.startMonth} {item.startYear} —
+                                            {item.isPresent ? (
+                                                <span class="present">
+                                                    Present
+                                                </span>
+                                            ) : (
+                                                `${item.endMonth} ${item.endYear}`
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })
-            }
+                        );
+                    })
+                }
+            </div>
+            <div class="career-highlights">Career Highlights</div>
         </div>
     </div>
 </Layout>
@@ -72,11 +79,21 @@ console.log(career);
         margin-top: 2rem;
         /* margin-bottom: 2rem; */
     }
+    .career-page-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex: 1;
+    }
     .timeline {
-        padding-left: 4px;
         border-left: 2px solid rgb(var(--accent));
         font-weight: 200;
         margin-bottom: 6rem;
+        padding-left: 4px;
+        padding-right: 2rem;
+    }
+    .career-highlights {
+        padding-left: 2rem;
     }
     .career-item {
         margin-top: 5px;
@@ -138,6 +155,16 @@ console.log(career);
     }
 
     @media (max-width: 480px) {
+        .career-page-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+        .timeline {
+            /* padding-left: 4px; */
+            padding-right: initial;
+        }
         .career-card {
             width: calc(100vw - 5rem);
             margin-left: 10px;
