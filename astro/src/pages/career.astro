@@ -3,30 +3,30 @@ import Layout from "../layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import * as careerContent from "../content/career/career.md";
 
-const career = careerContent.frontmatter;
-console.log(career);
+const careerObj = careerContent.frontmatter;
+// console.log(career);
 ---
 
 <Layout>
-    <div class="flex-col-center career-page">
+    <div class="flex-col-center page">
         <h2>Career</h2>
-        <div class="flex-col-center career-page-content">
-            <div class="timeline">
+        <div class="page-content">
+            <div class="left-col timeline">
                 {
-                    career.map((item: any) => {
+                    careerObj.map((item: any) => {
                         return (
                             <div
                                 class={
                                     item.present
-                                        ? "career-item present"
-                                        : "career-item"
+                                        ? "list-item present"
+                                        : "list-item"
                                 }
                             >
                                 <div
                                     class={
                                         item.isPresent
-                                            ? "career-card present"
-                                            : "career-card"
+                                            ? "list-card career-card present"
+                                            : "list-card career-card"
                                     }
                                 >
                                     <div class="career-card-row upper">
@@ -75,38 +75,20 @@ console.log(career);
                     })
                 }
             </div>
-            <div class="career-highlights">Career Highlights</div>
+            <div class="right-col">
+                Career Highlights
+            </div>
         </div>
     </div>
 </Layout>
 
 <style>
-    .career-page {
-        margin-top: 2rem;
-        /* margin-bottom: 2rem; */
-    }
-    .career-page-content {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        flex: 1;
-    }
     .timeline {
         border-left: 2px solid rgb(var(--accent));
-        font-weight: 200;
-        margin-bottom: 6rem;
         padding-left: 4px;
-        padding-right: 2rem;
+        font-weight: 200;
     }
-    .career-highlights {
-        padding-left: 2rem;
-    }
-    .career-item {
-        margin-top: 5px;
-        margin-bottom: 5px;
-        position: relative;
-    }
-    .career-item::before {
+    .list-item::before {
         content: "";
         position: absolute;
         left: -10px;
@@ -115,17 +97,6 @@ console.log(career);
         height: 10px;
         border-radius: 50%;
         background-color: rgb(var(--accent));
-    }
-    .career-item.present::before {
-        background-color: rgb(var(--accent-light)) !important;
-    }
-    .career-card {
-        width: 34rem;
-        margin-left: 20px;
-        padding: 10px;
-        line-height: 1.3rem;
-        display: flex;
-        flex-direction: column;
     }
     .career-card-row {
         display: flex;
@@ -160,16 +131,12 @@ console.log(career);
         color: rgb(var(--accent-light));
     }
 
-    @media (max-width: 480px) {
-        .career-page-content {
+    @media (max-width: 1080px) {
+        .page-content {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             flex: 1;
-        }
-        .timeline {
-            /* padding-left: 4px; */
-            padding-right: initial;
         }
         .career-card {
             width: calc(100vw - 5rem);
@@ -183,8 +150,6 @@ console.log(career);
         .career-card-row.lower {
             display: flex;
             flex-wrap: wrap;
-        }
-        .career-card .logo svg {
         }
         .career-card .role,
         .career-card .location,
