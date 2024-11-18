@@ -15,7 +15,11 @@ import Navbar from "../components/Navbar.astro";
         <meta charset="UTF-8" />
         <meta name="description" content="Astro description" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/src/assets/favicon/favicon.svg" />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="/src/assets/favicon/favicon.svg"
+        />
         <meta name="generator" content={Astro.generator} />
         <title>Seongtaek Lim's Portfolio</title>
     </head>
@@ -37,7 +41,7 @@ import Navbar from "../components/Navbar.astro";
     /* e.g., <Icon name="filename" /> */
 
     /* Page Transition */
-    @view-transition {
+    /* @view-transition {
         navigation: auto;
     }
     @keyframes blur-out {
@@ -47,7 +51,7 @@ import Navbar from "../components/Navbar.astro";
         to {
             filter: blur(10px);
         }
-    }
+    } */
     @keyframes blur-in {
         from {
             filter: blur(10px);
@@ -56,11 +60,11 @@ import Navbar from "../components/Navbar.astro";
             filter: blur(0);
         }
     }
-    ::view-transition-old(root) {
+    /* ::view-transition-old(root) {
         animation: 0.2s ease-in both blur-out;
-    }
+    } */
     ::view-transition-new(root) {
-        animation: 0.2s ease-in both blur-in;
+        animation: 0.3s ease-in both blur-in;
     }
 
     /* Global styles */
@@ -117,5 +121,51 @@ import Navbar from "../components/Navbar.astro";
         flex-direction: row; /* Arrange items in a row */
         align-items: center; /* Center items vertically */
         justify-content: center; /* Center items horizontally */
+    }
+    .page {
+        margin-top: 3vh;
+        padding-bottom: 7vh;
+    }
+    .page-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex: 1;
+    }
+    .page .page-content .left-col {
+        margin-bottom: 6rem;
+        padding-right: 2rem;
+    }
+    .page .page-content .right-col {
+        padding-left: 2rem;
+        margin-bottom: 6rem;
+    }
+    .list-item {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    .list-card {
+        width: 34rem;
+        margin-left: 20px;
+        padding: 10px;
+        line-height: 1.3rem;
+        display: flex;
+        flex-direction: column;
+    }
+    .text-gradient {
+        background-image: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 300%;
+        background-position: 0%;
+    }
+    @media (max-width: 1080px) {
+        .page .page-content .left-col {
+            padding-right: initial;
+        }
+        .page .page-content .right-col {
+            padding-left: initial;
+        }
     }
 </style>

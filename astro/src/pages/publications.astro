@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+// import { Icon } from "astro-icon/components";
+import * as publications from "../content/publications/publications.md";
+
+const publicationObj = publications.frontmatter;
+console.log(publicationObj);
+---
+
+<Layout>
+    <div class="flex-col-center page">
+        <h2>Publications</h2>
+        <div class="page-content">
+            <div class="">
+                {
+                    publicationObj.map((item: any) => {
+                        return (
+                            <div class="list-item">
+                                <dif class="list-card publication-card">
+                                    <p set:html={item} />
+                                </dif>
+                            </div>
+                        );
+                    })
+                }
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .publication-card {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 1rem;
+    }
+    .publication-card p {
+        line-height: 1.5rem;
+        text-indent: 1rem;
+    }
+    :global(span.me) {
+        font-weight: 700;
+    }
+    @media (max-width: 1080px) {
+        .list-card.publication-card {
+            width: unset;
+        }
+    }
+</style>
