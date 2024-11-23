@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
@@ -6,7 +7,6 @@ import Layout from "../../layouts/Layout.astro";
 export async function getStaticPaths() {
   const photography = await getCollection("photography");
   const paths = Object.values(photography).map((category) => {
-    // console.log(category);
     return {
       params: {
         photos: category.id,
@@ -19,16 +19,21 @@ export async function getStaticPaths() {
   // console.log(paths);
   return paths;
 }
+
 const { category } = Astro.props;
 console.log(category);
 ---
 
 <Layout>
   <div class="flex-col-center page">
-    <h2>Photography</h2>
+    <h2 class="title-case">Photography
+      &nbsp;
+      <Icon name="quill--chevron-right" />
+      &nbsp;
+      {category.data.title}
+    </h2>
     <div class="page-content">
       <div class="">
-        {category.data.title}
         {category.data.description}
       </div>
     </div>
@@ -36,6 +41,12 @@ console.log(category);
 </Layout>
 
 <style>
+  h2 {
+    display: inline-block;
+  }
+  h2 > svg {
+    font-size: 1rem;
+  }
   /* .photography-card {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
