@@ -1,10 +1,26 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 
-const photography = await getCollection("photography");
-// console.log(photography);
+export async function getStaticPaths() {
+  const photography = await getCollection("photography");
+  const paths = Object.values(photography).map((category) => {
+    // console.log(category);
+    return {
+      params: {
+        photos: category.id,
+      },
+      props: {
+        category,
+      },
+    };
+  });
+  // console.log(paths);
+  return paths;
+}
+const { category } = Astro.props;
+console.log(category);
 ---
 
 <Layout>
@@ -12,19 +28,8 @@ const photography = await getCollection("photography");
     <h2>Photography</h2>
     <div class="page-content">
       <div class="">
-        {
-          photography.map((item: any) => {
-            return (
-              <div class="list-item">
-                <dif class="list-card photography-card">
-                  <a href=`/photography/${item.data.title}` class="title-case">
-                    {item.data.title}
-                  </a>
-                </dif>
-              </div>
-            );
-          })
-        }
+        {category.data.title}
+        {category.data.description}
       </div>
     </div>
   </div>
