@@ -2,8 +2,10 @@
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import PhotographyList from "../components/PhotographyList.astro";
 
 const photography = await getCollection("photography");
+const sortedPhotography = photography.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
 // console.log(photography);
 ---
 
@@ -11,39 +13,10 @@ const photography = await getCollection("photography");
   <div class="flex-col-center page">
     <h2>Photography</h2>
     <div class="page-content">
-      <div class="">
-        {
-          photography.map((item: any) => {
-            return (
-              <div class="list-item">
-                <dif class="list-card photography-card">
-                  <a href=`/photography/${item.data.title}` class="title-case">
-                    {item.data.title}
-                  </a>
-                </dif>
-              </div>
-            );
-          })
-        }
-      </div>
+      <PhotographyList items={photography} />
     </div>
   </div>
 </Layout>
 
 <style>
-  /* .photography-card {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding-left: 0.5rem;
-    padding-right: 1rem;
-  } */
-  /* .photography-card p {
-    line-height: 1.5rem;
-    text-indent: 1rem;
-  } */
-  /* @media (max-width: 1080px) {
-    .list-card.publication-card {
-      width: unset;
-    }
-  } */
 </style>

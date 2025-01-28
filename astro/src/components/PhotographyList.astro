@@ -1,0 +1,53 @@
+---
+interface Props {
+  items: Array<{
+    data: {
+      title: string;
+      description: string;
+      order?: number;
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+---
+
+<div class="photography-list">
+  {
+    sortedItems.map((item) => (
+      <div class="list-item">
+        <a class="photography-card" href={`/photography/${item.data.title}`} >
+          <div class="title-case text-justify">
+            {item.data.title}
+          </div>
+        </a>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .photography-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  
+  .list-item {
+    /* margin: 0; */
+  }
+
+  .photography-card {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+  }
+</style>

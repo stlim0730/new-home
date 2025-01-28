@@ -4,7 +4,8 @@ const photography = defineCollection({
   type: "data",
   schema: z.object({
     title: z.string(),
-    description: z.string()
+    description: z.string(),
+    order: z.number().optional().default(999)
   }),
 });
 
