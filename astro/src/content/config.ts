@@ -5,7 +5,8 @@ const photography = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    order: z.number().optional().default(999)
+    order: z.number().optional().default(999),
+    featuredImages: z.array(z.string()).optional().default([]),
   }),
 });
 
