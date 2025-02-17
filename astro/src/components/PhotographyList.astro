@@ -16,14 +16,14 @@ const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?
 
 <div class="photography-list">
   {
-    sortedItems.map((item) => {
+    sortedItems.map((item, index) => {
       const images = item.data.featuredImages || [];
       const randomImage = images.length > 0
         ? images[Math.floor(Math.random() * images.length)]
         : '/assets/images/photography/placeholder.jpg';
 
       return (
-        <div class="list-item">
+        <div class="list-item" style={`--item-index: ${index};`}>
           <a
             class="photography-card"
             href={`/photography/${item.data.title}`}
@@ -84,5 +84,38 @@ const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?
   .card-content h3 {
     background-color: rgba(0, 0, 0, 0.5);
     letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 480px) {
+    .photography-list {
+      flex-direction: column;
+      /* gap: 2rem; */
+    }
+
+    .list-item {
+      width: 100%;
+    }
+
+    .photography-card {
+      /* Silver ratio - width:height = 1:1.414 */
+      height: 30vh;
+      width: calc(30vh * 1.414);
+      animation: colorWave 2s infinite;
+      animation-delay: calc(var(--item-index) * -0.7s);
+      transition: none;
+    }
+
+    .photography-card:hover {
+      filter: none;
+    }
+
+    @keyframes colorWave {
+      0%, 100% {
+        filter: grayscale(80%);
+      }
+      50% {
+        filter: grayscale(0%);
+      }
+    }
   }
 </style>
