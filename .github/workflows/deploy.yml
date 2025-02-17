@@ -1,0 +1,55 @@
+name: Deploy Seongtaek Lim's Website to GitHub Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: [ main ]
+  # Runs on pull request merges to the default branch
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only deploy when changes are merged, not on PR creation or updates
+jobs:
+  build:
+    # Skip if PR was closed without merging
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Seongtaek Lim's Website to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
