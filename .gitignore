@@ -2,7 +2,7 @@
 node_modules/
 
 # Generated thumbnails
-public/assets/images/photography/*/thumbnails/
+astro/public/assets/images/photography/*/thumbnails/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
