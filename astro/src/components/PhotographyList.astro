@@ -30,9 +30,9 @@ const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?
             style={`background-image: url(${randomImage});`}
           >
             <div class="card-content">
-              <h3 class="title-case">
+              <h5 class="title-case">
                 {item.data.title}
-              </h3>
+              </h5>
             </div>
           </a>
         </div>
@@ -81,12 +81,11 @@ const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
   }
 
-  .card-content h3 {
+  .card-content h5 {
     background-color: rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.1em;
   }
 
-  @media (max-width: 1635px) {
+  @media (max-width: 1080px) {
     .photography-list {
       flex-direction: column;
     }
@@ -99,8 +98,8 @@ const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?
       /* Silver ratio - width:height = 1:1.414 */
       height: 30vh;
       width: calc(30vh * 1.414);
-      animation: colorWave 2s infinite;
-      animation-delay: calc(var(--item-index) * -0.7s);
+      animation: colorWave 5s infinite;
+      animation-delay: calc(var(--item-index) * -0.8s);
       transition: none;
     }
 
