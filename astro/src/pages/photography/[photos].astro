@@ -173,7 +173,13 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
   <!-- Modal for full-size image -->
   <div id="imageModal" class="modal">
     <button class="modal-close">&times;</button>
+    <button class="nav-button prev-button" aria-label="Previous image">
+      <Icon name="quill--chevron-left" />
+    </button>
     <img class="modal-content" id="modalImage" />
+    <button class="nav-button next-button" aria-label="Next image">
+      <Icon name="quill--chevron-right" />
+    </button>
   </div>
 </Layout>
 
@@ -183,8 +189,31 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     const modal = document.getElementById('imageModal') as HTMLDivElement;
     const modalImg = document.getElementById('modalImage') as HTMLImageElement;
     const closeBtn = modal.querySelector('.modal-close') as HTMLButtonElement;
+    const prevBtn = modal.querySelector('.prev-button') as HTMLButtonElement;
+    const nextBtn = modal.querySelector('.next-button') as HTMLButtonElement;
+    let currentImageIndex = 0;
     
     console.log('Setting up image viewer for', images.length, 'images');
+
+    function showImage(index: number) {
+      currentImageIndex = index;
+      const container = images[index].closest('.image-container');
+      const fullSrc = images[index].getAttribute('data-full-src');
+      if (fullSrc) {
+        modalImg.src = fullSrc;
+        modalImg.alt = images[index].alt;
+      }
+    }
+
+    function showNextImage() {
+      const nextIndex = (currentImageIndex + 1) % images.length;
+      showImage(nextIndex);
+    }
+
+    function showPrevImage() {
+      const prevIndex = (currentImageIndex - 1 + images.length) % images.length;
+      showImage(prevIndex);
+    }
 
     // Handle thumbnail loading
     images.forEach((img, index) => {
@@ -236,15 +265,29 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
         }
       });
 
-      // Add click handler to view full image
+      // Update click handler to include index
       container?.addEventListener('click', () => {
-        const fullSrc = img.getAttribute('data-full-src');
-        if (fullSrc) {
-          modal.style.display = 'flex';
-          modalImg.src = fullSrc;
-          modalImg.alt = img.alt;
-        }
+        modal.style.display = 'flex';
+        showImage(index);
       });
+    });
+
+    // Navigation button handlers
+    prevBtn.addEventListener('click', showPrevImage);
+    nextBtn.addEventListener('click', showNextImage);
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (modal.style.display === 'flex') {
+        if (e.key === 'Escape') {
+          modal.style.display = 'none';
+          modalImg.src = '';
+        } else if (e.key === 'ArrowLeft') {
+          showPrevImage();
+        } else if (e.key === 'ArrowRight') {
+          showNextImage();
+        }
+      }
     });
 
     // Close modal when clicking close button or outside the image
@@ -255,14 +298,6 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        modal.style.display = 'none';
-        modalImg.src = '';
-      }
-    });
-
-    // Handle keyboard events
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.style.display === 'flex') {
         modal.style.display = 'none';
         modalImg.src = '';
       }
@@ -427,5 +462,51 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     .modal-content {
       max-width: 95%;
     }
+
+    .nav-button {
+      width: 40px;
+      height: 40px;
+    }
+
+    .prev-button {
+      left: 1rem;
+    }
+
+    .next-button {
+      right: 1rem;
+    }
+  }
+
+  .nav-button {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white;
+    z-index: 1001;
+  }
+
+  .nav-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .prev-button {
+    left: 1rem;
+  }
+
+  .next-button {
+    right: 5rem;
+  }
+
+  .nav-button [data-icon] {
+    width: 24px;
+    height: 24px;
   }
 </style>
