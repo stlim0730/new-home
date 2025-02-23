@@ -251,8 +251,8 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
         isPanning = true;
         imageWrapper.style.cursor = 'grabbing';
         startPoint = {
-          x: e.pageX - imageWrapper.offsetLeft,
-          y: e.pageY - imageWrapper.offsetTop
+          x: e.clientX,
+          y: e.clientY
         };
         scrollLeft = imageWrapper.scrollLeft;
         scrollTop = imageWrapper.scrollTop;
@@ -262,12 +262,10 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     function doPan(e: MouseEvent) {
       if (!isPanning) return;
       e.preventDefault();
-      const x = e.pageX - imageWrapper.offsetLeft;
-      const y = e.pageY - imageWrapper.offsetTop;
-      const walkX = (x - startPoint.x);
-      const walkY = (y - startPoint.y);
-      imageWrapper.scrollLeft = scrollLeft - walkX;
-      imageWrapper.scrollTop = scrollTop - walkY;
+      const dx = e.clientX - startPoint.x;
+      const dy = e.clientY - startPoint.y;
+      imageWrapper.scrollLeft = scrollLeft - dx;
+      imageWrapper.scrollTop = scrollTop - dy;
     }
 
     function endPan() {
@@ -509,6 +507,8 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     justify-content: center;
     align-items: center;
     padding: 2rem;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .image-wrapper {
@@ -519,14 +519,23 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     display: flex;
     justify-content: center;
     align-items: center;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .image-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 
   .modal-content {
     width: auto;
+    max-width: none;
     height: 90vh;
     border-radius: 4px;
     transition: transform 0.3s ease;
     transform-origin: center;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   .zoom-controls {
