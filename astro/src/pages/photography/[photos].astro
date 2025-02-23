@@ -175,10 +175,21 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     <button class="modal-close" aria-label="Close modal">
       <Icon name="quill--close" />
     </button>
+    <div class="zoom-controls">
+      <button class="zoom-button zoom-out" aria-label="Zoom out" disabled>
+        <Icon name="zoom-out-svgrepo" />
+      </button>
+      <span class="zoom-level">100%</span>
+      <button class="zoom-button zoom-in" aria-label="Zoom in">
+        <Icon name="zoom-in-svgrepo" />
+      </button>
+    </div>
+    <div class="image-wrapper">
+      <img class="modal-content" id="modalImage" />
+    </div>
     <button class="nav-button prev-button" aria-label="Previous image">
       <Icon name="quill--chevron-left" />
     </button>
-    <img class="modal-content" id="modalImage" />
     <button class="nav-button next-button" aria-label="Next image">
       <Icon name="quill--chevron-right" />
     </button>
@@ -190,12 +201,89 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     const images = document.querySelectorAll<HTMLImageElement>('.photo.thumbnail');
     const modal = document.getElementById('imageModal') as HTMLDivElement;
     const modalImg = document.getElementById('modalImage') as HTMLImageElement;
+    const imageWrapper = modal.querySelector('.image-wrapper') as HTMLDivElement;
     const closeBtn = modal.querySelector('.modal-close') as HTMLButtonElement;
     const prevBtn = modal.querySelector('.prev-button') as HTMLButtonElement;
     const nextBtn = modal.querySelector('.next-button') as HTMLButtonElement;
+    const zoomInBtn = modal.querySelector('.zoom-in') as HTMLButtonElement;
+    const zoomOutBtn = modal.querySelector('.zoom-out') as HTMLButtonElement;
+    const zoomLevelDisplay = modal.querySelector('.zoom-level') as HTMLSpanElement;
     let currentImageIndex = 0;
+    let currentZoom = 100;
+    let isPanning = false;
+    let startPoint = { x: 0, y: 0 };
+    let scrollLeft = 0;
+    let scrollTop = 0;
     
-    console.log('Setting up image viewer for', images.length, 'images');
+    function updateZoomControls() {
+      zoomLevelDisplay.textContent = `${currentZoom}%`;
+      zoomInBtn.disabled = currentZoom >= 200;
+      zoomOutBtn.disabled = currentZoom <= 100;
+      imageWrapper.style.cursor = currentZoom > 100 ? 'grab' : 'default';
+    }
+
+    function setZoomLevel(zoom: number) {
+      currentZoom = Math.max(100, Math.min(200, zoom));
+      modalImg.style.transform = `scale(${currentZoom / 100})`;
+      modalImg.style.transformOrigin = 'center';
+      modalImg.style.width = '100%'; // Reset width to 100% and use transform for zoom
+      updateZoomControls();
+
+      // Center the image after zoom
+      if (currentZoom > 100) {
+        const scrollX = (imageWrapper.scrollWidth - imageWrapper.clientWidth) / 2;
+        const scrollY = (imageWrapper.scrollHeight - imageWrapper.clientHeight) / 2;
+        imageWrapper.scrollTo(scrollX, scrollY);
+      }
+    }
+
+    function handleZoomIn() {
+      setZoomLevel(currentZoom + 25);
+    }
+
+    function handleZoomOut() {
+      setZoomLevel(currentZoom - 25);
+    }
+
+    // Pan functionality
+    function startPan(e: MouseEvent) {
+      if (currentZoom > 100) {
+        isPanning = true;
+        imageWrapper.style.cursor = 'grabbing';
+        startPoint = {
+          x: e.pageX - imageWrapper.offsetLeft,
+          y: e.pageY - imageWrapper.offsetTop
+        };
+        scrollLeft = imageWrapper.scrollLeft;
+        scrollTop = imageWrapper.scrollTop;
+      }
+    }
+
+    function doPan(e: MouseEvent) {
+      if (!isPanning) return;
+      e.preventDefault();
+      const x = e.pageX - imageWrapper.offsetLeft;
+      const y = e.pageY - imageWrapper.offsetTop;
+      const walkX = (x - startPoint.x);
+      const walkY = (y - startPoint.y);
+      imageWrapper.scrollLeft = scrollLeft - walkX;
+      imageWrapper.scrollTop = scrollTop - walkY;
+    }
+
+    function endPan() {
+      isPanning = false;
+      imageWrapper.style.cursor = currentZoom > 100 ? 'grab' : 'default';
+    }
+
+    // Add pan event listeners
+    imageWrapper.addEventListener('mousedown', startPan);
+    imageWrapper.addEventListener('mousemove', doPan);
+    imageWrapper.addEventListener('mouseup', endPan);
+    imageWrapper.addEventListener('mouseleave', endPan);
+
+    // Add zoom button handlers
+    zoomInBtn.addEventListener('click', handleZoomIn);
+    zoomOutBtn.addEventListener('click', handleZoomOut);
 
     function showImage(index: number) {
       currentImageIndex = index;
@@ -204,6 +292,13 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
       if (fullSrc) {
         modalImg.src = fullSrc;
         modalImg.alt = images[index].alt;
+        modalImg.style.transform = 'scale(1)';
+        modalImg.style.width = '100%';
+        // Reset zoom level when showing new image
+        setZoomLevel(100);
+        // Reset scroll position
+        imageWrapper.scrollLeft = 0;
+        imageWrapper.scrollTop = 0;
       }
     }
 
@@ -278,30 +373,36 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     prevBtn.addEventListener('click', showPrevImage);
     nextBtn.addEventListener('click', showNextImage);
 
-    // Add keyboard navigation
+    // Update close handlers to reset zoom
+    function closeModal() {
+      modal.style.display = 'none';
+      modalImg.src = '';
+      setZoomLevel(100);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Add keyboard shortcuts for zoom
     document.addEventListener('keydown', (e) => {
       if (modal.style.display === 'flex') {
         if (e.key === 'Escape') {
-          modal.style.display = 'none';
-          modalImg.src = '';
+          closeModal();
         } else if (e.key === 'ArrowLeft') {
           showPrevImage();
         } else if (e.key === 'ArrowRight') {
           showNextImage();
+        } else if (e.key === '=' && e.ctrlKey) {
+          e.preventDefault();
+          handleZoomIn();
+        } else if (e.key === '-' && e.ctrlKey) {
+          e.preventDefault();
+          handleZoomOut();
         }
-      }
-    });
-
-    // Close modal when clicking close button or outside the image
-    closeBtn.addEventListener('click', () => {
-      modal.style.display = 'none';
-      modalImg.src = '';
-    });
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        modalImg.src = '';
       }
     });
   }
@@ -410,11 +511,71 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
     padding: 2rem;
   }
 
-  .modal-content {
+  .image-wrapper {
     max-width: 90%;
     max-height: 90vh;
-    object-fit: contain;
+    overflow: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    width: auto;
+    height: 90vh;
     border-radius: 4px;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem;
+    border-radius: 8px;
+    z-index: 1001;
+  }
+
+  .zoom-button {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .zoom-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .zoom-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .zoom-button [data-icon] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .zoom-level {
+    color: white;
+    font-size: 0.9rem;
+    min-width: 4rem;
+    text-align: center;
   }
 
   .modal-close {
