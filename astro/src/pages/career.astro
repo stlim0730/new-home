@@ -13,14 +13,12 @@ const careerObj = careerContent.frontmatter;
         <div class="page-content">
             <div class="left-col timeline">
                 {
-                    careerObj.map((item: any) => {
+                    careerObj.map((item: any, index: number) => {
+                        const previousItem = index > 0 ? careerObj[index - 1] : null;
+                        const showDot = !previousItem || previousItem.institution !== item.institution;
                         return (
                             <div
-                                class={
-                                    item.present
-                                        ? "list-item present"
-                                        : "list-item"
-                                }
+                                class={`list-item ${item.present ? "present" : ""} ${showDot ? "with-dot" : ""}`}
                             >
                                 <div
                                     class={
@@ -88,7 +86,11 @@ const careerObj = careerContent.frontmatter;
         padding-left: 4px;
     }
     .list-item::before {
+        display: none; /* Hide the default dot */
+    }
+    .list-item.with-dot::before {
         content: "";
+        display: block;
         position: absolute;
         left: -10px;
         top: 0;
