@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import fs from 'node:fs';
 import path from 'node:path';
@@ -138,7 +138,11 @@ export async function getStaticPaths() {
   return paths;
 }
 
+const allCategories = await getCollection("photography");
 const { category, images } = Astro.props;
+const otherCategories = allCategories
+  .filter((cat: CollectionEntry<"photography">) => cat.id !== category.id)
+  .sort((a, b) => (a.data.order ?? Infinity) - (b.data.order ?? Infinity));
 console.log(`Rendering ${images.length} images for category:`, category.id);
 ---
 
@@ -148,6 +152,17 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
       <small><Icon name="quill--chevron-right" /></small>
       {category.data.title}
     </h2>
+    <nav class="category-nav" aria-label="Other photography categories">
+      <span class="nav-prefix">Jump to other categories:</span>
+      <ul>
+        {otherCategories.map((cat: CollectionEntry<"photography">, index: number) => (
+          <li>
+            <a href={`/photography/${cat.id}`}>{cat.data.title}</a>
+            {index < otherCategories.length - 1 && ", "}
+          </li>
+        ))}
+      </ul>
+    </nav>
     <div class="page-content">
       <div class="category-description">
         {category.data.description}
@@ -689,5 +704,42 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
   .nav-button [data-icon] {
     width: 24px;
     height: 24px;
+  }
+
+  .category-nav {
+    margin: 0.5rem auto 2rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-align: center;
+  }
+
+  .category-nav .nav-prefix {
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-right: 0.5rem;
+  }
+
+  .category-nav ul {
+    display: inline;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .category-nav li {
+    display: inline;
+    text-transform: capitalize;
+  }
+
+  .category-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .category-nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
   }
 </style>
