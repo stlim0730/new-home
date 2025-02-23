@@ -11,7 +11,8 @@ const careerObj = careerContent.frontmatter;
     <div class="flex-col-center page">
         <h2>Career</h2>
         <div class="page-content">
-            <div class="left-col timeline">
+            <div class="timeline">
+            <!-- <div class="left-col timeline"> -->
                 {
                     careerObj.map((item: any, index: number) => {
                         const previousItem = index > 0 ? careerObj[index - 1] : null;
@@ -73,9 +74,9 @@ const careerObj = careerContent.frontmatter;
                     })
                 }
             </div>
-            <div class="right-col">
+            <!-- <div class="right-col">
                 Career Highlights
-            </div>
+            </div> -->
         </div>
     </div>
 </Layout>
