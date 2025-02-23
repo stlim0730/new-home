@@ -1,0 +1,756 @@
+---
+import { Icon } from "astro-icon/components";
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface ImageInfo {
+  path: string;
+  url: string;
+  thumbnail: string;
+  alt: string;
+}
+
+interface Props {
+  category: any;
+  images: ImageInfo[];
+}
+
+export async function getStaticPaths() {
+  const photography = await getCollection("photography");
+  console.log('Found photography categories:', photography.map(cat => cat.id));
+
+  function getImagesFromCategory(category: string) {
+    try {
+      function getThumbnailPath(imagePath: string): string {
+        const { dir, name } = path.parse(imagePath);
+        const thumbnailPath = path.join(dir, 'thumbnails', `${name}.png`).replace(/\\/g, '/');
+        console.log('Thumbnail path generation:', {
+          originalPath: imagePath,
+          parsedDir: dir,
+          parsedName: name,
+          thumbnailPath
+        });
+        return thumbnailPath;
+      }
+
+      // Debug current working directory and environment
+      const debugInfo = {
+        cwd: process.cwd(),
+        env: process.env.NODE_ENV,
+        platform: process.platform
+      };
+      console.log('Debug environment:', debugInfo);
+
+      // Try both relative and absolute paths
+      const relativePath = path.join('public', 'assets', 'images', 'photography', category.toLowerCase());
+      const absolutePath = path.join(process.cwd(), relativePath);
+
+      // Check paths
+      const pathChecks = {
+        relative: {
+          path: relativePath,
+          exists: fs.existsSync(relativePath)
+        },
+        absolute: {
+          path: absolutePath,
+          exists: fs.existsSync(absolutePath)
+        }
+      };
+      console.log('Path checks:', pathChecks);
+
+      // Use the first path that exists
+      const categoryPath = [absolutePath, relativePath].find(p => fs.existsSync(p));
+      
+      if (!categoryPath) {
+        console.warn('No valid path found for category:', category);
+        return [];
+      }
+
+      console.log('Using path:', categoryPath);
+
+      // List directory contents
+      const dirContents = fs.readdirSync(categoryPath, { withFileTypes: true });
+      console.log('Directory contents:', {
+        category,
+        path: categoryPath,
+        items: dirContents.map(item => ({
+          name: item.name,
+          type: item.isDirectory() ? 'directory' : 'file'
+        }))
+      });
+
+      const files = dirContents
+        .filter(item => item.isFile())
+        .map(item => item.name);
+
+      // Process images
+      const images = files.reduce((acc, file) => {
+        if (/\.(jpg|jpeg|png|gif)$/i.test(file) && !file.includes('thumbnails/')) {
+          const relativePath = path.join('assets', 'images', 'photography', category.toLowerCase(), file).replace(/\\/g, '/');
+          const image = {
+            path: relativePath,
+            url: relativePath,
+            thumbnail: getThumbnailPath(relativePath),
+            alt: path.basename(file, path.extname(file))
+          };
+          console.log('Processed image:', {
+            category,
+            originalFile: file,
+            paths: image
+          });
+          acc.push(image);
+        }
+        return acc;
+      }, [] as ImageInfo[]);
+
+      console.log('Image processing results:', {
+        category,
+        totalFiles: files.length,
+        processedImages: images.length,
+        sampleImage: images[0]
+      });
+
+      return images;
+    } catch (error) {
+      console.error('Error details:', {
+        category,
+        error: error instanceof Error ? {
+          message: error.message,
+          stack: error.stack
+        } : error
+      });
+      return [];
+    }
+  }
+
+  const paths = await Promise.all(
+    photography.map(async (category) => ({
+      params: { photos: category.id },
+      props: {
+        category,
+        images: getImagesFromCategory(category.id)
+      }
+    }))
+  );
+
+  return paths;
+}
+
+const allCategories = await getCollection("photography");
+const { category, images } = Astro.props;
+const otherCategories = allCategories
+  .filter((cat: CollectionEntry<"photography">) => cat.id !== category.id)
+  .sort((a, b) => (a.data.order ?? Infinity) - (b.data.order ?? Infinity));
+console.log(`Rendering ${images.length} images for category:`, category.id);
+---
+
+<Layout>
+  <div class="flex-col-center page">
+    <h2 class="title-case">Photography
+      <small><Icon name="quill--chevron-right" /></small>
+      {category.data.title}
+    </h2>
+    <nav class="category-nav" aria-label="Other photography categories">
+      <span class="nav-prefix">Other categories:</span>
+      <ul>
+        {otherCategories.map((cat: CollectionEntry<"photography">, index: number) => (
+          <li>
+            <a href={`/photography/${cat.id}`}>{cat.data.title}</a>
+            {index < otherCategories.length - 1 && ", "}
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="page-content">
+      <div class="category-description">
+        {category.data.description}
+      </div>
+      <div class="image-grid" id="imageGrid">
+        {images.map((image, index) => (
+          <div class="image-container" data-index={index}>
+            <img
+              src={`/${image.thumbnail}`}
+              data-full-src={`/${image.url}`}
+              alt={image.alt}
+              loading="lazy"
+              decoding="async"
+              class="photo thumbnail"
+            />
+            <div class="placeholder"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for full-size image -->
+  <div id="imageModal" class="modal">
+    <button class="modal-close" aria-label="Close modal">
+      <Icon name="quill--close" />
+    </button>
+    <div class="zoom-controls">
+      <button class="zoom-button zoom-out" aria-label="Zoom out" disabled>
+        <Icon name="zoom-out-svgrepo" />
+      </button>
+      <span class="zoom-level">100%</span>
+      <button class="zoom-button zoom-in" aria-label="Zoom in">
+        <Icon name="zoom-in-svgrepo" />
+      </button>
+    </div>
+    <div class="image-wrapper">
+      <img class="modal-content" id="modalImage" />
+    </div>
+    <button class="nav-button prev-button" aria-label="Previous image">
+      <Icon name="quill--chevron-left" />
+    </button>
+    <button class="nav-button next-button" aria-label="Next image">
+      <Icon name="quill--chevron-right" />
+    </button>
+  </div>
+</Layout>
+
+<script>
+  function setupImageViewer() {
+    const images = document.querySelectorAll<HTMLImageElement>('.photo.thumbnail');
+    const modal = document.getElementById('imageModal') as HTMLDivElement;
+    const modalImg = document.getElementById('modalImage') as HTMLImageElement;
+    const imageWrapper = modal.querySelector('.image-wrapper') as HTMLDivElement;
+    const closeBtn = modal.querySelector('.modal-close') as HTMLButtonElement;
+    const prevBtn = modal.querySelector('.prev-button') as HTMLButtonElement;
+    const nextBtn = modal.querySelector('.next-button') as HTMLButtonElement;
+    const zoomInBtn = modal.querySelector('.zoom-in') as HTMLButtonElement;
+    const zoomOutBtn = modal.querySelector('.zoom-out') as HTMLButtonElement;
+    const zoomLevelDisplay = modal.querySelector('.zoom-level') as HTMLSpanElement;
+    let currentImageIndex = 0;
+    let currentZoom = 100;
+    let isPanning = false;
+    let startPoint = { x: 0, y: 0 };
+    let scrollLeft = 0;
+    let scrollTop = 0;
+    
+    function updateZoomControls() {
+      zoomLevelDisplay.textContent = `${currentZoom}%`;
+      zoomInBtn.disabled = currentZoom >= 200;
+      zoomOutBtn.disabled = currentZoom <= 100;
+      imageWrapper.style.cursor = currentZoom > 100 ? 'grab' : 'default';
+    }
+
+    function setZoomLevel(zoom: number) {
+      currentZoom = Math.max(100, Math.min(200, zoom));
+      modalImg.style.transform = `scale(${currentZoom / 100})`;
+      modalImg.style.transformOrigin = 'center';
+      modalImg.style.width = '100%'; // Reset width to 100% and use transform for zoom
+      updateZoomControls();
+
+      // Center the image after zoom
+      if (currentZoom > 100) {
+        const scrollX = (imageWrapper.scrollWidth - imageWrapper.clientWidth) / 2;
+        const scrollY = (imageWrapper.scrollHeight - imageWrapper.clientHeight) / 2;
+        imageWrapper.scrollTo(scrollX, scrollY);
+      }
+    }
+
+    function handleZoomIn() {
+      setZoomLevel(currentZoom + 25);
+    }
+
+    function handleZoomOut() {
+      setZoomLevel(currentZoom - 25);
+    }
+
+    // Pan functionality
+    function startPan(e: MouseEvent) {
+      if (currentZoom > 100) {
+        isPanning = true;
+        imageWrapper.style.cursor = 'grabbing';
+        startPoint = {
+          x: e.clientX,
+          y: e.clientY
+        };
+        scrollLeft = imageWrapper.scrollLeft;
+        scrollTop = imageWrapper.scrollTop;
+      }
+    }
+
+    function doPan(e: MouseEvent) {
+      if (!isPanning) return;
+      e.preventDefault();
+      const dx = e.clientX - startPoint.x;
+      const dy = e.clientY - startPoint.y;
+      imageWrapper.scrollLeft = scrollLeft - dx;
+      imageWrapper.scrollTop = scrollTop - dy;
+    }
+
+    function endPan() {
+      isPanning = false;
+      imageWrapper.style.cursor = currentZoom > 100 ? 'grab' : 'default';
+    }
+
+    // Add pan event listeners
+    imageWrapper.addEventListener('mousedown', startPan);
+    imageWrapper.addEventListener('mousemove', doPan);
+    imageWrapper.addEventListener('mouseup', endPan);
+    imageWrapper.addEventListener('mouseleave', endPan);
+
+    // Add zoom button handlers
+    zoomInBtn.addEventListener('click', handleZoomIn);
+    zoomOutBtn.addEventListener('click', handleZoomOut);
+
+    function showImage(index: number) {
+      currentImageIndex = index;
+      const container = images[index].closest('.image-container');
+      const fullSrc = images[index].getAttribute('data-full-src');
+      if (fullSrc) {
+        modalImg.src = fullSrc;
+        modalImg.alt = images[index].alt;
+        modalImg.style.transform = 'scale(1)';
+        modalImg.style.width = '100%';
+        // Reset zoom level when showing new image
+        setZoomLevel(100);
+        // Reset scroll position
+        imageWrapper.scrollLeft = 0;
+        imageWrapper.scrollTop = 0;
+      }
+    }
+
+    function showNextImage() {
+      const nextIndex = (currentImageIndex + 1) % images.length;
+      showImage(nextIndex);
+    }
+
+    function showPrevImage() {
+      const prevIndex = (currentImageIndex - 1 + images.length) % images.length;
+      showImage(prevIndex);
+    }
+
+    // Handle thumbnail loading
+    images.forEach((img, index) => {
+      const container = img.closest('.image-container');
+      const placeholder = container?.querySelector('.placeholder');
+
+      // Set initial state
+      img.style.opacity = '0';
+      
+      // Debug loading state
+      console.log(`Initial thumbnail state ${index}:`, {
+        src: img.src,
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        hasContainer: !!container,
+        hasPlaceholder: !!placeholder
+      });
+
+      // Handle already loaded images
+      if (img.complete && img.naturalWidth > 0) {
+        console.log(`Thumbnail ${index} already loaded:`, img.src);
+        img.style.opacity = '1';
+        img.classList.add('loaded');
+        container?.classList.add('loaded');
+        placeholder?.remove();
+      }
+
+      img.addEventListener('load', () => {
+        console.log(`Thumbnail ${index} load event:`, {
+          src: img.src,
+          complete: img.complete,
+          naturalWidth: img.naturalWidth
+        });
+        img.style.opacity = '1';
+        img.classList.add('loaded');
+        container?.classList.add('loaded');
+        placeholder?.remove();
+      });
+
+      img.addEventListener('error', (e) => {
+        console.error(`Error loading thumbnail ${index}:`, {
+          src: img.src,
+          error: e
+        });
+        container?.classList.add('error');
+        if (placeholder) {
+          placeholder.textContent = 'Failed to load image';
+          placeholder.classList.add('error-message');
+        }
+      });
+
+      // Update click handler to include index
+      container?.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        showImage(index);
+      });
+    });
+
+    // Navigation button handlers
+    prevBtn.addEventListener('click', showPrevImage);
+    nextBtn.addEventListener('click', showNextImage);
+
+    // Update close handlers to reset zoom
+    function closeModal() {
+      modal.style.display = 'none';
+      modalImg.src = '';
+      setZoomLevel(100);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Add keyboard shortcuts for zoom
+    document.addEventListener('keydown', (e) => {
+      if (modal.style.display === 'flex') {
+        if (e.key === 'Escape') {
+          closeModal();
+        } else if (e.key === 'ArrowLeft') {
+          showPrevImage();
+        } else if (e.key === 'ArrowRight') {
+          showNextImage();
+        } else if (e.key === '=' && e.ctrlKey) {
+          e.preventDefault();
+          handleZoomIn();
+        } else if (e.key === '-' && e.ctrlKey) {
+          e.preventDefault();
+          handleZoomOut();
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', setupImageViewer);
+</script>
+
+<style>
+  .page-content {
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .category-description {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    font-size: 1.1rem;
+  }
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .image-container {
+    position: relative;
+    aspect-ratio: 3/2;
+    width: 100%;
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--background-color);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+
+  .image-container:hover {
+    transform: scale(1.02);
+  }
+
+  .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .placeholder.error-message {
+    background: #ffebee;
+    animation: none;
+  }
+
+  .photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .photo.thumbnail {
+    z-index: 2;
+    opacity: 0; /* Start hidden */
+  }
+
+  .photo.loaded {
+    opacity: 1;
+  }
+
+  .image-container.error .placeholder {
+    background: #ffebee;
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .image-wrapper {
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  .image-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  .modal-content {
+    width: auto;
+    max-width: none;
+    height: 90vh;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.5rem;
+    border-radius: 8px;
+    z-index: 1001;
+  }
+
+  .zoom-button {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .zoom-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .zoom-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .zoom-button [data-icon] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .zoom-level {
+    color: white;
+    font-size: 0.9rem;
+    min-width: 4rem;
+    text-align: center;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: white;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1001;
+  }
+
+  .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .modal-close [data-icon] {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav-button {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white;
+    z-index: 1001;
+  }
+
+  .nav-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .prev-button {
+    left: 1rem;
+  }
+
+  .next-button {
+    right: 5rem;
+  }
+
+  .nav-button [data-icon] {
+    width: 24px;
+    height: 24px;
+  }
+
+  .category-nav {
+    margin: 0.5rem auto 2rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-align: center;
+  }
+
+  .category-nav .nav-prefix {
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-right: 0.5rem;
+  }
+
+  .category-nav ul {
+    display: inline;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .category-nav li {
+    display: inline;
+    text-transform: capitalize;
+  }
+
+  .category-nav a {
+    color: var(--text-color);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .category-nav a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @media (max-width: 1080px) {
+    .image-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    .page-content {
+      margin-left: 0rem;
+      margin-right: 0rem;
+      padding-left: 0rem;
+      padding-right: 0rem;
+    }
+
+    .image-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .zoom-controls {
+      display: none;
+    }
+
+    .modal {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .modal-content {
+      max-width: 95vw;
+      height: auto;
+    }
+
+    .nav-button {
+      width: 40px;
+      height: 40px;
+    }
+
+    .prev-button {
+      left: 1rem;
+    }
+
+    .next-button {
+      right: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import PhotographyList from "../components/PhotographyList.astro";
+
+const photography = await getCollection("photography");
+const sortedPhotography = photography.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+// console.log(photography);
+---
+
+<Layout>
+  <div class="flex-col-center page">
+    <h2>Photography</h2>
+    <div class="page-content">
+      <PhotographyList items={photography} />
+    </div>
+  </div>
+</Layout>
+
+<style>
+</style>

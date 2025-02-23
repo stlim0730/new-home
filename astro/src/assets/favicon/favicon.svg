@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32">
   <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-3 {
+        fill: #1b1c1d;
+      }
+    </style>
     <linearGradient id="linear-gradient" x1="4.2" y1="15.61" x2="27.78" y2="15.61" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#757f9a"/>
       <stop offset="1" stop-color="#d7dde8"/>
     </linearGradient>
   </defs>
   <g id="Background">
-    <rect width="32" height="32" style="fill: #1b1c1d; stroke-width: 0px;"/>
+    <rect class="cls-3" width="32" height="32"/>
   </g>
   <g id="Layer_2" data-name="Layer 2">
     <g>
-      <text transform="translate(3.2 19.05)" style="font-family: SofiaPro-Light, &apos;Sofia Pro&apos;; font-size: 10px; font-weight: 300;"><tspan x="0" y="0" style="letter-spacing: .1em;">E</tspan><tspan x="6.59" y="0" style="letter-spacing: .2em;">H</tspan><tspan x="15.69" y="0" style="letter-spacing: .15em;">7</tspan><tspan x="22.37" y="0" style="letter-spacing: .2em;">1</tspan></text>
       <g>
-        <path d="m8.13,12.17v.66h-3.27v2.52h2.86v.66h-2.86v2.39h3.38v.66h-4.04v-6.89h3.93Z" style="fill: url(#linear-gradient); stroke-width: 0px;"/>
-        <path d="m15.89,19.05h-.66v-3.11h-3.78v3.11h-.66v-6.89h.66v3.16h3.78v-3.16h.66v6.89Z" style="fill: url(#linear-gradient); stroke-width: 0px;"/>
-        <path d="m20.23,19.05h-.78l3.31-5.99h-3.28v-.66h4.41l-3.66,6.65Z" style="fill: url(#linear-gradient); stroke-width: 0px;"/>
-        <path d="m27.12,13.27l-1.13.39v-.6l1.79-.65v6.65h-.66v-5.79Z" style="fill: url(#linear-gradient); stroke-width: 0px;"/>
+        <path class="cls-2" d="m8.13,12.17v.66h-3.27v2.52h2.86v.66h-2.86v2.39h3.38v.66h-4.04v-6.89h3.93Z"/>
+        <path class="cls-2" d="m15.89,19.05h-.66v-3.11h-3.78v3.11h-.66v-6.89h.66v3.16h3.78v-3.16h.66v6.89Z"/>
+        <path class="cls-2" d="m20.23,19.05h-.78l3.31-5.99h-3.28v-.66h4.41l-3.66,6.65Z"/>
+        <path class="cls-2" d="m27.12,13.27l-1.13.39v-.6l1.79-.65v6.65h-.66v-5.79Z"/>
+      </g>
+      <g>
+        <path class="cls-1" d="m8.13,12.17v.66h-3.27v2.52h2.86v.66h-2.86v2.39h3.38v.66h-4.04v-6.89h3.93Z"/>
+        <path class="cls-1" d="m15.89,19.05h-.66v-3.11h-3.78v3.11h-.66v-6.89h.66v3.16h3.78v-3.16h.66v6.89Z"/>
+        <path class="cls-1" d="m20.23,19.05h-.78l3.31-5.99h-3.28v-.66h4.41l-3.66,6.65Z"/>
+        <path class="cls-1" d="m27.12,13.27l-1.13.39v-.6l1.79-.65v6.65h-.66v-5.79Z"/>
       </g>
     </g>
   </g>

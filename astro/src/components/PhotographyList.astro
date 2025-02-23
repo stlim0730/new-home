@@ -1,0 +1,119 @@
+---
+interface Props {
+  items: Array<{
+    data: {
+      title: string;
+      description: string;
+      order?: number;
+      featuredImages?: string[];
+    };
+  }>;
+}
+
+const { items } = Astro.props;
+const sortedItems = items.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+---
+
+<div class="photography-list">
+  {
+    sortedItems.map((item, index) => {
+      const images = item.data.featuredImages || [];
+      const randomImage = images.length > 0
+        ? images[Math.floor(Math.random() * images.length)]
+        : '/assets/images/photography/placeholder.jpg';
+
+      return (
+        <div class="list-item" style={`--item-index: ${index};`}>
+          <a
+            class="photography-card"
+            href={`/photography/${item.data.title}`}
+            style={`background-image: url(${randomImage});`}
+          >
+            <div class="card-content">
+              <h5 class="title-case">
+                {item.data.title}
+              </h5>
+            </div>
+          </a>
+        </div>
+      );
+    })
+  }
+</div>
+
+<style>
+  .photography-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .photography-card {
+    width: 10vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    transition: filter 0.3s ease-in-out;
+    filter: grayscale(80%);
+  }
+
+  .photography-card:hover {
+    filter: grayscale(0%);
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+    color: white;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  }
+
+  .card-content h5 {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 1080px) {
+    .photography-list {
+      flex-direction: column;
+    }
+
+    .list-item {
+      width: 100%;
+    }
+
+    .photography-card {
+      /* Silver ratio - width:height = 1:1.414 */
+      height: 30vh;
+      width: calc(30vh * 1.414);
+      animation: colorWave 5s infinite;
+      animation-delay: calc(var(--item-index) * -0.8s);
+      transition: none;
+    }
+
+    .photography-card:hover {
+      filter: none;
+    }
+
+    @keyframes colorWave {
+      0%, 100% {
+        filter: grayscale(80%);
+      }
+      50% {
+        filter: grayscale(0%);
+      }
+    }
+  }
+</style>

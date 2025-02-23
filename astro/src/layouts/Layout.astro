@@ -21,7 +21,7 @@ import Navbar from "../components/Navbar.astro";
             href="/src/assets/favicon/favicon.svg"
         />
         <meta name="generator" content={Astro.generator} />
-        <title>Seongtaek Lim's Portfolio</title>
+        <title>Seongtaek Lim</title>
     </head>
     <body>
         <Navbar />
@@ -86,8 +86,9 @@ import Navbar from "../components/Navbar.astro";
         background: var(--background--dark);
         color: #fffff0;
         margin: 0;
-        width: 100vw;
+        width: calc(100vw - 15px);
         height: 100vh;
+        font-weight: 200;
     }
     h1,
     h2,
@@ -99,12 +100,15 @@ import Navbar from "../components/Navbar.astro";
         padding-top: 0.3rem;
         padding-bottom: 0.3rem;
     }
+    div {
+        font-weight: 200;
+    }
     p {
         font-weight: 200;
         letter-spacing: 0.1em;
     }
     .container {
-        width: 100%;
+        /* width: 100%; */
         height: calc(100vh - 6rem);
     }
     .full-height {
@@ -112,15 +116,15 @@ import Navbar from "../components/Navbar.astro";
     }
     .flex-col-center {
         display: flex;
-        flex-direction: column; /* Arrange items in a column */
-        align-items: center; /* Center items horizontally */
-        justify-content: center; /* Center items vertically */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
     .flex-row-center {
         display: flex;
-        flex-direction: row; /* Arrange items in a row */
-        align-items: center; /* Center items vertically */
-        justify-content: center; /* Center items horizontally */
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
     }
     .page {
         margin-top: 3vh;
@@ -160,7 +164,13 @@ import Navbar from "../components/Navbar.astro";
         background-size: 300%;
         background-position: 0%;
     }
+    .title-case {
+        text-transform: capitalize;
+    }
     @media (max-width: 1080px) {
+        body {
+            width: 100vw;
+        }
         .page .page-content .left-col {
             padding-right: initial;
         }
