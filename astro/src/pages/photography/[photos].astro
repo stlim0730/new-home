@@ -172,7 +172,9 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
 
   <!-- Modal for full-size image -->
   <div id="imageModal" class="modal">
-    <button class="modal-close">&times;</button>
+    <button class="modal-close" aria-label="Close modal">
+      <Icon name="quill--close" />
+    </button>
     <button class="nav-button prev-button" aria-label="Previous image">
       <Icon name="quill--chevron-left" />
     </button>
@@ -418,19 +420,28 @@ console.log(`Rendering ${images.length} images for category:`, category.id);
   .modal-close {
     position: absolute;
     top: 1rem;
-    right: 2rem;
+    left: 1rem;
     color: white;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-    background: none;
+    background: transparent;
     border: none;
-    padding: 0.5rem;
-    line-height: 1;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1001;
   }
 
   .modal-close:hover {
-    color: #ccc;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .modal-close [data-icon] {
+    width: 24px;
+    height: 24px;
   }
 
   @keyframes shimmer {
